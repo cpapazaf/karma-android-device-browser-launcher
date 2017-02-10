@@ -1,5 +1,8 @@
 # karma-android-device-browser-launcher
 
+[![NPM](https://nodei.co/npm/karma-android-device-browser-launcher.png?compact=true)](https://npmjs.org/package/karma-android-device-browser-launcher)
+[![Build Status](https://travis-ci.org/cpapazaf/karma-android-device-browser-launcher.svg?branch=master)](https://travis-ci.org/cpapazaf/karma-android-device-browser-launcher)
+
 > Run Karma Tests on the available android browsers. Tests will run on the physical android devices connected to your pc.
 
 ## Installation
