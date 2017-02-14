@@ -1,6 +1,6 @@
 {
   "name": "karma-android-device-browser-launcher",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A Karma plugin. Find connected android devices and run the karma tests on the available browsers",
   "main": "index.js",
   "scripts": {},
@@ -17,7 +17,6 @@
     "name": "Christos Papazafeiropoulos",
     "email": "xpapazaf@live.com"
   },
-  "dependencies": {},
   "dependencies": {
     "fs-access": "^1.0.0"
   },
