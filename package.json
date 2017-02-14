@@ -18,8 +18,8 @@
     "email": "xpapazaf@live.com"
   },
   "dependencies": {},
-  "peerDependencies": {
-    "karma": ">=0.10"
+  "dependencies": {
+    "fs-access": "^1.0.0"
   },
   "license": "MIT",
   "devDependencies": {
