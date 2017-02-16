@@ -1,75 +1,108 @@
-var fsAccess = require('fs-access')
 var spawn = require('child_process').spawn
 var path = require('path')
-var q = require('q')
 
+var BROWSER_CHROME = "chrome"
+var BROWSER_INTERNET = "internet"
+var BROWSER_FIREFOX = "firefox"
+
+var BROWSERS = {
+  chrome: {
+    startActivity: "com.android.chrome/.ChromeTabbedActivity",
+    stopActivity: "com.android.chrome"
+  },
+  internet: {
+    startActivity: "com.sec.android.app.sbrowser/.SBrowserMainActivity",
+    stopActivity: "com.sec.android.app.sbrowser"
+  },
+  firefox: {
+    startActivity: "org.mozilla.firefox/.App",
+    stopActivity: "org.mozilla.firefox"
+  }
+}
+
+function guessSdkHome () {
+  switch (process.platform) {
+    case 'darwin':
+      return ''
+    case 'linux':
+      return ''
+    case 'win32':
+      return ''
+  }
+}
 
 var AndroidDevice = function (args, logger, baseLauncherDecorator) {
   var self = this
-    baseLauncherDecorator(self)
+  baseLauncherDecorator(self)
 
-    var deviceUuid = args.deviceUuid
-    var adb = path.join(args.sdkHome, 'platform-tools/adb')
+  var log = logger.create('launcher.android_device')
 
-
-    var log = logger.create('launcher.android_device')
-
-    this._execCommand = function (cmd, args, closeCallback=null) {
-      if (!cmd) {
-        log.error('No binary for %s browser on your platform.\n  ' +
-            'Please, set "%s" env variable.', self.name, self.ENV_CMD)
+  var deviceUuid = args.deviceUuid || null
+  var deviceBrowser = args.deviceBrowser || BROWSER_INTERNET
+  var sdkHome = args.sdkHome || guessSdkHome()
+  var adb = path.join(sdkHome, 'platform-tools/adb')
 
 
-          self._retryLimit = -1
+  this._execCommand = function (cmd, args, closeCallback=null) {
+    if (!cmd) {
+      log.error('No binary for %s browser on your platform.\n  ' +
+          'Please, set "%s" env variable.', self.name, self.ENV_CMD)
 
-          return self._clearTempDirAndReportDone('no binary')
-      }
-
-      cmd = this._normalizeCommand(cmd)
-
-        log.debug(cmd + ' ' + args.join(' '))
-        self._process = spawn(cmd, args)
-
-        var errorOutput = ''
-
-        self._process.on('close', function (code) {
-          log.debug(cmd + ' closed!')
-          if (closeCallback) {
-            closeCallback()
-          }
-        })
-
-      self._process.on('error', function (err) {
-        if (err.code === 'ENOENT') {
-          self._retryLimit = -1
-        errorOutput = 'Can not find the binary ' + cmd + '\n\t' +
-        'Please set env variable ' + self.ENV_CMD
-        } else {
-          errorOutput += err.toString()
-        }
-      })
+      self._retryLimit = -1
+      return self._clearTempDirAndReportDone('no binary')
     }
+
+    cmd = this._normalizeCommand(cmd)
+
+    log.debug(cmd + ' ' + args.join(' '))
+    self._process = spawn(cmd, args)
+
+    var errorOutput = ''
+
+    self._process.on('close', function (code) {
+      log.debug(cmd + ' closed!')
+      if (closeCallback) {
+        closeCallback()
+      }
+    })
+
+    self._process.on('error', function (err) {
+      if (err.code === 'ENOENT') {
+        self._retryLimit = -1
+        errorOutput = 'Can not find the binary ' + cmd + '\n\t' + 'Please set env variable ' + self.ENV_CMD
+      } else {
+        errorOutput += err.toString()
+      }
+    })
+  }
 
   // overwrites the karma/lib/launchers/base.js start function
   // we do that because the adb command is not blocking. While with
   // the normal browsers we keep the process id of the browser and then
   // we kill the browser process when the testcase is done
   this.start = function(url) {
-    log.debug('Starting %s with id %s', self.name, self.id)
-      self._execCommand(adb, this._getOptions(url + '?id=' + self.id));
+    // TODO: fix how it should fail by adding state and taking care of the restarts
+    if (deviceBrowser !== BROWSER_CHROME && deviceBrowser !== BROWSER_INTERNET && deviceBrowser !== BROWSER_FIREFOX) {
+      log.error('Wrong Device browser, is: %s', deviceBrowser)
+      this.error = 'Wrong device browser [chrome, firefox, internet]'
+    }
 
-    //setTimeout(function () {}, 60000)
+    log.debug('Starting %s with id %s and options %s', self.name, self.id, this._getOptions(url + '?id=' + self.id))
+    self._execCommand(adb, this._getOptions(url + '?id=' + self.id));
+
   }
 
   this._getOptions = function (url) {
     return [
-      '-s',
-      deviceUuid,
+      (deviceUuid === null)? '' : '-s',
+      (deviceUuid === null)? '' : deviceUuid,
       'shell',
       'am',
       'start',
       '-a',
       'android.intent.action.VIEW',
+      '-n',
+      BROWSERS[deviceBrowser].startActivity,
       '-d ' + url
       ]
   }
@@ -90,8 +123,8 @@ var AndroidDevice = function (args, logger, baseLauncherDecorator) {
     }
 
     var killingPromise =this.emitAsync('android-device-browser-kill').then(function(resolve, reject) {
-        self._execCommand(adb, [ 'shell', 'am', 'force-stop', 'com.android.chrome' ], function () {
-          self._done('No error!')
+        self._execCommand(adb, ['-s', deviceUuid, 'shell', 'am', 'force-stop', BROWSERS[deviceBrowser].stopActivity ], function () {
+          self._done()
         })
       }
     )
@@ -116,6 +149,11 @@ var AndroidDevice = function (args, logger, baseLauncherDecorator) {
   this._done = function (error) {
     log.debug('Done now, emiting event with error %s', error)
     this.emit('done')
+
+    if (this.error) {
+      this.error = error
+      emitter.emit('browser_process_failure', this)
+    }
   }
 
 }

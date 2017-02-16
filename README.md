@@ -31,8 +31,9 @@ module.exports = function(config) {
     customLaunchers: {
       RealAndroidBrowser: {
         base: 'AndroidDevice',
-        deviceUuid: '.....',
-        sdkHome: '/Users/<user>/Library/Android/sdk/'
+        deviceUuid: '.....', // (Mandatory)
+        sdkHome: '/Users/<user>/Library/Android/sdk/', // (Mandatory)
+        deviceBrowser: 'firefox' //(optional) select from [chrome, internet, firefox]. default is: internet
       }
     }
   });
