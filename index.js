@@ -7,7 +7,7 @@ var BROWSER_FIREFOX = "firefox"
 
 var BROWSERS = {
   chrome: {
-    startActivity: "com.android.chrome/.ChromeTabbedActivity",
+    startActivity: "com.android.chrome/org.chromium.chrome.browser.ChromeTabbedActivity",
     stopActivity: "com.android.chrome"
   },
   internet: {
@@ -15,7 +15,7 @@ var BROWSERS = {
     stopActivity: "com.sec.android.app.sbrowser"
   },
   firefox: {
-    startActivity: "org.mozilla.firefox/.App",
+    startActivity: "org.mozilla.firefox/org.mozilla.gecko.BrowserApp",
     stopActivity: "org.mozilla.firefox"
   }
 }
@@ -103,7 +103,7 @@ var AndroidDevice = function (args, logger, baseLauncherDecorator) {
       'android.intent.action.VIEW',
       '-n',
       BROWSERS[deviceBrowser].startActivity,
-      '-d ' + url
+      '-d ' + '"' + url + '"'
       ]
   }
 
