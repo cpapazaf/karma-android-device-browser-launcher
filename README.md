@@ -20,7 +20,7 @@ npm install @iprecali1/karma-android-device-browser-launcher@1.0.0
 ## Configuration
 ```js
 // karma.conf.js
-hostname: '.....' // (Mandatory your PC IP adress)
+hostname: '.....' // (Mandatory your PC IP address)
 
 module.exports = function(config) {
   config.set({
