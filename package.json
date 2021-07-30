@@ -1,12 +1,12 @@
 {
-  "name": "karma-android-device-browser-launcher",
+  "name": "@iprecali1/karma-android-device-browser-launcher",
   "version": "1.0.0",
   "description": "A Karma plugin. Find connected android devices and run the karma tests on the available browsers",
   "main": "index.js",
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git://github.com/cpapazaf/karma-android-device-browser-launcher.git"
+    "url": "git://github.com/iprecali1/karma-android-device-browser-launcher.git"
   },
   "keywords": [
     "karma-plugin",
@@ -27,5 +27,10 @@
     "grunt-bump": "~0.0.7",
     "grunt-auto-release": "~0.0.2"
   },
-  "contributors": []
+  "contributors": [
+    {
+      "name": "Ivan Precali",
+      "email": "ivan.precali@castlabs.com"
+    }
+  ]
 }
