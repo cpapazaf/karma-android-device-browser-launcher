@@ -40,7 +40,8 @@ var AndroidDevice = function (args, logger, baseLauncherDecorator) {
   var deviceUuid = args.deviceUuid || null
   var deviceBrowser = args.deviceBrowser || BROWSER_INTERNET
   var sdkHome = args.sdkHome || guessSdkHome()
-  var adb = path.join(sdkHome, 'platform-tools/adb')
+  // var adb = path.join(sdkHome, 'platform-tools/adb')
+  var adb = path.join('adb') // requires adb to be in PATH variables
 
 
   this._execCommand = function (cmd, args, closeCallback=null) {
@@ -54,7 +55,7 @@ var AndroidDevice = function (args, logger, baseLauncherDecorator) {
 
     cmd = this._normalizeCommand(cmd)
 
-    log.debug(cmd + ' ' + args.join(' '))
+    log.info(cmd + ' ' + args.join(' '))
     self._process = spawn(cmd, args)
 
     var errorOutput = ''
