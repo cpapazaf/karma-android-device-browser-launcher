@@ -1,10 +1,5 @@
 # karma-android-device-browser-launcher
 
-[![NPM](https://nodei.co/npm/karma-android-device-browser-launcher.png?compact=true)](https://npmjs.org/package/karma-android-device-browser-launcher)
-[![Build Status](https://travis-ci.org/cpapazaf/karma-android-device-browser-launcher.svg?branch=master)](https://travis-ci.org/cpapazaf/karma-android-device-browser-launcher)
-
-> Run Karma Tests on the available android browsers. Tests will run on the physical android devices connected to your pc.
-
 ## Installation
 
 The easiest way is to keep `karma-android-device-browser-launcher` as a devDependency in your `package.json`.
@@ -12,19 +7,21 @@ The easiest way is to keep `karma-android-device-browser-launcher` as a devDepen
 {
   "devDependencies": {
     "karma": "~0.10",
-    "karma-android-device-browser-launcher": "~0.1"
+    "@iprecali1/karma-android-device-browser-launcher": "1.0.0"
   }
 }
 ```
 
 You can simply do it by:
 ```bash
-npm install karma-android-device-browser-launcher --save-dev
+npm install @iprecali1/karma-android-device-browser-launcher@1.0.0
 ```
 
 ## Configuration
 ```js
 // karma.conf.js
+hostname: '.....' // (Mandatory your PC IP adress)
+
 module.exports = function(config) {
   config.set({
     browsers: ['RealAndroidBrowser'],
